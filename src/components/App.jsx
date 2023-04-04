@@ -6,6 +6,8 @@ import { ContactList } from './ContactList/ContactList';
 import { Filter } from './Filter/Filter';
 import { Wrapper, Title, ContactTitle } from './App.styled';
 
+const LS_KEY = 'contacts';
+
 class App extends Component {
   state = {
     contacts: [
@@ -16,6 +18,21 @@ class App extends Component {
     ],
     filter: '',
   };
+
+  componentDidUpdate(_, prevState) {
+    const { contacts } = this.state;
+    if (prevState.contacts.length !== contacts.length) {
+      localStorage.setItem(LS_KEY, JSON.stringify(contacts));
+    }
+  }
+  componentDidMount() {
+    const contacts = localStorage.getItem(LS_KEY);
+    const localParce = JSON.parse(contacts);
+    if (localParce) {
+      this.setState({ contacts: localParce });
+    }
+  }
+
   handleSubmitForm = (values, { resetForm }) => {
     const contact = {
       id: shortid.generate(),
